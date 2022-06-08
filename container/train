@@ -13,10 +13,20 @@ echo $yolo
 echo $weight
 python /opt/yolov5/train.py --img $img --batch $batch --hyp $hyp --epochs $epochs --data $data \
 --cfg $yolo --weights $weight --name $name
+python /opt/yolov5/export.py --weights /opt/yolov5/runs/train/$name/weights/best.pt --include  onnx engine
+
 pwd
 ls /opt
 echo "@@@@@@@"
 ls /opt/yolov5
 echo "######"
+find /opt/yolov5 -name best* 
+echo "+++++++"
+ls /opt/yolov5/runs/train/$name
+echo "%%%%%%%"
+find /opt/yolov5 -name *onnx
+echo "======="
+find /opt/yolov5
+echo "-------"
 cp -r /opt/yolov5/runs/train/$name /opt/ml/model/
 #cp -r /opt/code/runs/train/$name /opt/ml/model/
