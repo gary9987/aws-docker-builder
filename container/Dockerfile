@@ -15,7 +15,7 @@ RUN pip install tensorboard torch torchvision --upgrade
 RUN mkdir -p /opt && \ 
     mkdir -p /opt/code && \
     cd /opt && git clone https://github.com/ultralytics/yolov5
-RUN pip install -r requirements.txt coremltools onnx onnx-simplifier onnxruntime-gpu openvino-dev tensorflow
+RUN pip install -r /opt/yolov5/requirements.txt coremltools onnx onnx-simplifier onnxruntime-gpu openvino-dev tensorflow
 
 ENV PATH="/opt/yolov5:${PATH}"
 WORKDIR /opt/code
