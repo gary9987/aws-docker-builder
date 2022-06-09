@@ -13,7 +13,7 @@ echo $yolo
 echo $weight
 python /opt/yolov5/train.py --img $img --batch $batch --hyp $hyp --epochs $epochs --data $data \
 --cfg $yolo --weights $weight --name $name
-python /opt/yolov5/export.py --weights /opt/yolov5/runs/train/$name/weights/best.pt --include  onnx engine
+python /opt/yolov5/export.py --weights /opt/yolov5/runs/train/$name/weights/best.pt  --device 0 --include  onnx engine
 
 pwd
 ls /opt
