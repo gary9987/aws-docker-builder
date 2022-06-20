@@ -18,6 +18,7 @@ RUN mkdir -p /opt && \
 RUN pip install -r /opt/yolov5/requirements.txt coremltools onnx onnx-simplifier onnxruntime openvino-dev tensorflow-cpu
 
 ENV PATH="/opt/yolov5:${PATH}"
+COPY export_trt7_onnx.py /opt/yolov5
 WORKDIR /opt/code
 ## https://github.com/aws/sagemaker-pytorch-training-toolkit/issues/143#issuecomment-566776288
 ## https://github.com/aws/sagemaker-pytorch-training-toolkit/blob/upgrade-training-toolkit/docker/build_artifacts/start_with_right_hostname.sh
