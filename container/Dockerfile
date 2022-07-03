@@ -10,7 +10,7 @@ RUN apt-get update \
 ## fix /usr/local/cuda-10.0/compat/libcuda.so
 ## RUN bash -c 'echo "/usr/local/cuda-10.0/compat" > /etc/ld.so.conf.d/cuda.conf'
 RUN ldconfig -v
-RUN pip install tensorboard torch torchvision --upgrade
+RUN pip install tensorboard torch torchvision pyyaml scikit-learn --upgrade
 
 RUN mkdir -p /opt && \ 
     mkdir -p /opt/code && \
