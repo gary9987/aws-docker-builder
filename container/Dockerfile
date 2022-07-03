@@ -27,3 +27,4 @@ COPY changehostname.c /opt/code
 COPY start_with_right_hostname.sh /usr/local/bin/start_with_right_hostname.sh
 COPY train /opt/code
 COPY predict /opt/code
+COPY train_valid_split.py /opt/code
