@@ -23,7 +23,7 @@ from sklearn.model_selection import train_test_split
 def move_files_to_folder(list_of_files, destination_folder):
     for f in list_of_files:
         try:
-            os.system(f'mv {f} {destination_folder}')
+            os.system(f'mv \"{f}\" \"{destination_folder}\"')
             #print(f'mv {f} {destination_folder}')
             #shutil.move(f, destination_folder)
         except:
