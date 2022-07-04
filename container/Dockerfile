@@ -14,7 +14,7 @@ RUN pip install tensorboard torch torchvision pyyaml scikit-learn --upgrade
 
 RUN mkdir -p /opt && \ 
     mkdir -p /opt/code && \
-    cd /opt && git clone https://github.com/ultralytics/yolov5
+    cd /opt && git clone https://github.com/gary9987/yolov5.git
 RUN pip install -r /opt/yolov5/requirements.txt coremltools onnx onnx-simplifier onnxruntime openvino-dev tensorflow-cpu
 
 ENV PATH="/opt/yolov5:${PATH}"
