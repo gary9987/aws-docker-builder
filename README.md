@@ -1,7 +1,5 @@
-# yolov5-docker-builder
-build a yolov5 training docker on AWS ECR
-
-# example:
-```
-./build-and-push.sh visualsearch-yolov5l-train
-```
+# docker-builder
+## sagemaker-docker-image
+- Build docker image for yolov5 on AWS sagemaker training job.
+## lambda-matplotlib-image
+- Build docker image for spot-bot-metrics-to-pciture Lambda function on AWS.
