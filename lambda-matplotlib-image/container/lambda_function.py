@@ -67,9 +67,6 @@ def lambda_handler(event, context):
         s3_client.upload_file(f'/tmp/{filename_list[i]}', metrics_bucket, f'{model_name}/{filename_list[i]}')
         filename_list[i] = f'{model_name}/{filename_list[i]}'
     
-    return {
-        'statusCode': 200,
-        'model_name': model_name,
-        'bucket': metrics_bucket,
-        'filename': filename_list
-    }
+    event['filename'] = filename_list
+    
+    return event
