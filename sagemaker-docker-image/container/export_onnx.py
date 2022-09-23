@@ -1,4 +1,4 @@
-# YOLOv5 by Ultralytics, GPL-3.0 license
+# YOLOv5 🚀 by Ultralytics, GPL-3.0 license
 """
 Export a YOLOv5 PyTorch model to other formats. TensorFlow exports authored by https://github.com/zldrobit
 
@@ -66,7 +66,7 @@ if platform.system() != 'Windows':
 
 from models.experimental import attempt_load
 from models.yolo import Detect
-from utils.dataloaders import LoadImages
+# from utils.dataloaders import LoadImages
 from utils.general import (LOGGER, check_dataset, check_img_size, check_requirements, check_version, colorstr,
                            file_size, print_args, url2file)
 from utils.torch_utils import select_device
@@ -173,6 +173,7 @@ def run(
         topk_all=100,  # TF.js NMS: topk for all classes to keep
         iou_thres=0.45,  # TF.js NMS: IoU threshold
         conf_thres=0.25,  # TF.js NMS: confidence threshold
+        target_trt_version=7,
 ):
     t = time.time()
     include = [x.lower() for x in include]  # to lowercase
@@ -187,7 +188,7 @@ def run(
     if half:
         assert device.type != 'cpu' or coreml or xml, '--half only compatible with GPU export, i.e. use --device 0'
         assert not dynamic, '--half not compatible with --dynamic, i.e. use either --half or --dynamic but not both'
-    model = attempt_load(weights, device=device, inplace=True, fuse=True)  # load FP32 model
+    model = attempt_load(weights, map_location=device, inplace=True, fuse=True)  # load FP32 model
     nc, names = model.nc, model.names  # number of classes, class names
 
     # Checks
@@ -217,9 +218,16 @@ def run(
     # Exports
     f = [''] * 10  # exported filenames
     warnings.filterwarnings(action='ignore', category=torch.jit.TracerWarning)  # suppress TracerWarning
-    grid = model.model[-1].anchor_grid
-    model.model[-1].anchor_grid = [a[..., :1, :1, :] for a in grid]
-    f[2] = export_onnx(model, im, file, 12, train, True, simplify)  # opset 12 for trt 7 # dyamic as True
+    if target_trt_version == '7':  # TensorRT 7 handling https://github.com/ultralytics/yolov5/issues/6012
+        grid = model.model[-1].anchor_grid
+        model.model[-1].anchor_grid = [a[..., :1, :1, :] for a in grid]
+        f[2] = export_onnx(model, im, file, 12, train, dynamic, simplify)  # opset 12
+        model.model[-1].anchor_grid = grid
+    elif target_trt_version=='8':  # TensorRT >= 8
+        f[2] = export_onnx(model, im, file, 13, train, dynamic, simplify)  # opset 13
+    else:
+        raise ValueError("tensorrt version {} is not supported now.".format(target_trt_version))
+
 
     # Finish
     f = [str(x) for x in f if x]  # filter out '' and None
@@ -257,12 +265,13 @@ def parse_opt():
     parser.add_argument('--topk-all', type=int, default=100, help='TF.js NMS: topk for all classes to keep')
     parser.add_argument('--iou-thres', type=float, default=0.45, help='TF.js NMS: IoU threshold')
     parser.add_argument('--conf-thres', type=float, default=0.25, help='TF.js NMS: confidence threshold')
+    parser.add_argument('--target_trt_version', type=str, default="7", help='Target TensorRT Version')
     parser.add_argument('--include',
                         nargs='+',
-                        default=['torchscript', 'onnx'],
+                        default=['onnx'],
                         help='torchscript, onnx, openvino, engine, coreml, saved_model, pb, tflite, edgetpu, tfjs')
     opt = parser.parse_args()
-    print_args(vars(opt))
+    print_args(FILE.stem, opt)
     return opt
 
 
