@@ -66,7 +66,7 @@ if platform.system() != 'Windows':
 
 from models.experimental import attempt_load
 from models.yolo import Detect
-# from utils.dataloaders import LoadImages
+from utils.dataloaders import LoadImages
 from utils.general import (LOGGER, check_dataset, check_img_size, check_requirements, check_version, colorstr,
                            file_size, print_args, url2file)
 from utils.torch_utils import select_device
@@ -188,7 +188,7 @@ def run(
     if half:
         assert device.type != 'cpu' or coreml or xml, '--half only compatible with GPU export, i.e. use --device 0'
         assert not dynamic, '--half not compatible with --dynamic, i.e. use either --half or --dynamic but not both'
-    model = attempt_load(weights, map_location=device, inplace=True, fuse=True)  # load FP32 model
+    model = attempt_load(weights, device=device, inplace=True, fuse=True)  # load FP32 model
     nc, names = model.nc, model.names  # number of classes, class names
 
     # Checks
@@ -207,7 +207,9 @@ def run(
     for k, m in model.named_modules():
         if isinstance(m, Detect):
             m.inplace = inplace
-            m.onnx_dynamic = dynamic
+            # set to false for avoiding Assertion failed: inputs.at(0).isInt32() && "For range operator with dynamic inputs, this version of TensorRT only supports INT32!"
+            # This is an error when building engine in TRT7.
+            m.onnx_dynamic = False 
             m.export = True
 
     for _ in range(2):
@@ -271,7 +273,7 @@ def parse_opt():
                         default=['onnx'],
                         help='torchscript, onnx, openvino, engine, coreml, saved_model, pb, tflite, edgetpu, tfjs')
     opt = parser.parse_args()
-    print_args(FILE.stem, opt)
+    print_args(vars(opt))
     return opt
 
 

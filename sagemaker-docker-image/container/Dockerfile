@@ -15,7 +15,7 @@ RUN ldconfig -v
 ## This repo inculdes: yolov5 release v6.1 + some metrics related code into train.py
 RUN mkdir -p /opt && \ 
     mkdir -p /opt/code && \
-    cd /opt && git clone -b dev/v6.1compatible https://github.com/gary9987/yolov5.git
+    cd /opt && git clone -b dev/v6.1plus-compatible https://github.com/gary9987/yolov5.git
 RUN pip install -r /opt/yolov5/requirements.txt
 # coremltools onnx onnx-simplifier onnxruntime openvino-dev tensorflow-cpu
 
